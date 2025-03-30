@@ -1,0 +1,47 @@
+name: clos
+
+topology:
+  kinds:
+    nokia_srlinux:
+      image: ghcr.io/nokia/srlinux:24.10.3
+    linux:
+      image: ghcr.io/hellt/network-multitool
+  nodes:
+    leaf1:
+      kind: nokia_srlinux
+      type: ixrd2l
+    leaf2:
+      kind: nokia_srlinux
+      type: ixrd2l
+    leaf3:
+      kind: nokia_srlinux
+      type: ixrd2l
+    spine:
+      kind: nokia_srlinux
+      type: ixrd3l
+    client1:
+      kind: linux
+      binds:
+        - bin/client1_setup_vlan.sh:/tmp/client1_setup_vlan.sh
+      exec:
+        - bash /tmp/client1_setup_vlan.sh
+    client2:
+      kind: linux
+      binds:
+        - bin/client2_setup_vlan.sh:/tmp/client2_setup_vlan.sh
+      exec:
+        - bash /tmp/client2_setup_vlan.sh
+    client3:
+      kind: linux
+      binds:
+        - bin/client3_setup_vlan.sh:/tmp/client3_setup_vlan.sh
+      exec:
+        - bash /tmp/client3_setup_vlan.sh
+
+  links:
+    - endpoints: ["leaf1:e1-49", "spine:e1-1"]
+    - endpoints: ["leaf2:e1-49", "spine:e1-2"]
+    - endpoints: ["leaf3:e1-49", "spine:e1-3"]
+    - endpoints: ["client1:eth1", "leaf1:e1-1"]
+    - endpoints: ["client2:eth1", "leaf2:e1-1"]
+    - endpoints: ["client3:eth1", "leaf3:e1-1"]
